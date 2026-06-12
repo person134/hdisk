@@ -105,8 +105,6 @@ pub fn print_help() {
     let c = |s: &str| line(s, width).bright_cyan();
     let lines = [
         "",
-        "  A cross-platform block device viewer and partition manager.",
-        "",
         "  Usage: hdisk <command> [options]",
         "",
         "  Commands:",

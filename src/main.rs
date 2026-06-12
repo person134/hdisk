@@ -17,7 +17,7 @@ fn main() {
 
     match args[1].as_str() {
         "-V" | "--version" => {
-            println!("hdisk {} — {}", env!("CARGO_PKG_VERSION"), env!("CARGO_PKG_DESCRIPTION"));
+            println!("hdisk {}", env!("CARGO_PKG_VERSION"));
         }
         "-h" | "--help" | "help" => {
             print_help();
