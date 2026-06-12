@@ -25,29 +25,30 @@ pub fn print_device_box(dev: &BlockDevice) {
     println!("{}", top_line(&title, width).bright_cyan());
 
     let inner = width.saturating_sub(4);
+    let c = |s: &str| line(s, inner);
 
     let model = if dev.model.is_empty() { "Unknown".into() } else { dev.model.clone() };
-    println!("{}", line(&format!("Model: {}", model), inner));
+    println!("{}", c(&format!("Model: {}", model)).bright_cyan());
     let size_str = format_size(dev.size);
-    println!("{}", line(&format!("Size: {}", size_str), inner));
+    println!("{}", c(&format!("Size: {}", size_str)).bright_cyan());
 
     let ro_str = if dev.ro { "Read-only" } else { "Read-Write" };
     let rem_str = if dev.removable { "Removable" } else { "Fixed" };
-    println!("{}", line(&format!("{} | {}", ro_str, rem_str), inner));
+    println!("{}", c(&format!("{} | {}", ro_str, rem_str)).bright_cyan());
 
     if !dev.tran.is_empty() {
-        println!("{}", line(&format!("Transport: {}", dev.tran), inner));
+        println!("{}", c(&format!("Transport: {}", dev.tran)).bright_cyan());
     }
 
     if !dev.partitions.is_empty() {
-        println!("{}", line("", inner));
-        println!("{}", line("Partitions:", inner).cyan());
+        println!("{}", c("").bright_cyan());
+        println!("{}", c("Partitions:").bright_cyan());
 
         for part in &dev.partitions {
             let sz = format_size(part.size);
             let fs = if part.fstype.is_empty() { String::new() } else { format!(" [{}]", part.fstype) };
             let line_str = format!("  {}  {}{}", part.name, sz, fs);
-            println!("{}", line(&line_str, inner));
+            println!("{}", c(&line_str).bright_cyan());
         }
     }
 
@@ -61,6 +62,7 @@ pub fn print_summary_box(devices: &[BlockDevice]) {
     println!("{}", top_line(title, width).bright_cyan());
 
     let inner = width.saturating_sub(4);
+    let c = |s: &str| line(s, inner).bright_cyan();
 
     for dev in devices {
         let size = format_size(dev.size);
@@ -71,7 +73,7 @@ pub fn print_summary_box(devices: &[BlockDevice]) {
             format!("{} part(s)", dev.partitions.len())
         };
         let line_str = format!("{}  {}  {}  {}", dev.name, size, model, parts);
-        println!("{}", line(&line_str, inner));
+        println!("{}", c(&line_str));
     }
 
     println!("{}", bottom_line(width).bright_cyan());
@@ -83,9 +85,11 @@ pub fn print_partition_table_box(device: &str, table: &str) {
     println!("{}", top_line(&title, width).bright_cyan());
 
     let inner = width.saturating_sub(4);
+    let c = |s: &str| line(s, inner).bright_cyan();
+
     for line_str in table.lines() {
         let truncated: String = line_str.chars().take(inner).collect();
-        println!("{}", line(&truncated, inner));
+        println!("{}", c(&truncated));
     }
 
     println!("{}", bottom_line(width).bright_cyan());
@@ -107,6 +111,7 @@ pub fn print_help() {
     let title = " hdisk ";
     println!("{}", top_line(title, width).bright_cyan());
     let inner = width.saturating_sub(4);
+    let c = |s: &str| line(s, inner).bright_cyan();
     let lines = [
         "",
         "  Usage: hdisk <command> [options]",
@@ -128,7 +133,7 @@ pub fn print_help() {
         "",
     ];
     for l in &lines {
-        println!("{}", line(l, inner));
+        println!("{}", c(l));
     }
     println!("{}", bottom_line(width).bright_cyan());
 }

@@ -11,7 +11,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
 
     if args.len() < 2 {
-        print_help();
+        run_list();
         return;
     }
 
@@ -23,15 +23,7 @@ fn main() {
             print_help();
         }
         "list" => {
-            let devices = list_devices();
-            if devices.is_empty() {
-                print_error("No block devices found");
-                return;
-            }
-            print_summary_box(&devices);
-            for dev in &devices {
-                print_device_box(dev);
-            }
+            run_list();
         }
         "info" => {
             if args.len() < 3 {
@@ -124,6 +116,18 @@ fn main() {
             println!();
             print_help();
         }
+    }
+}
+
+fn run_list() {
+    let devices = list_devices();
+    if devices.is_empty() {
+        print_error("No block devices found");
+        return;
+    }
+    print_summary_box(&devices);
+    for dev in &devices {
+        print_device_box(dev);
     }
 }
 
