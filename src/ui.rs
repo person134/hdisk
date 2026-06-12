@@ -2,12 +2,11 @@ use colored::*;
 use crate::device::{BlockDevice, format_size};
 
 fn line(s: &str, width: usize) -> String {
-    let inner = width.saturating_sub(3);
-    let visible = s.len();
-    if visible >= inner {
-        format!("│{}│", &s[..inner.saturating_sub(1)])
+    let max = width.saturating_sub(3);
+    if s.len() > max {
+        format!("│ {}│", &s[..max])
     } else {
-        format!("│ {}{}│", s, " ".repeat(inner.saturating_sub(visible)))
+        format!("│ {:width$}│", s, width = max)
     }
 }
 
@@ -66,12 +65,7 @@ pub fn print_summary_box(devices: &[BlockDevice]) {
     for dev in devices {
         let size = format_size(dev.size);
         let model = if dev.model.is_empty() { "Unknown".into() } else { dev.model.clone() };
-        let parts = if dev.partitions.is_empty() {
-            "no partitions".to_string()
-        } else {
-            format!("{} part(s)", dev.partitions.len())
-        };
-        let line_str = format!("{}  {}  {}  {}", dev.name, size, model, parts);
+        let line_str = format!("{}  {}  {}", dev.name, size, model);
         println!("{}", c(&line_str));
     }
 
