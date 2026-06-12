@@ -1,12 +1,13 @@
 use colored::*;
 use crate::device::{BlockDevice, format_size};
 
-fn line(s: &str, inner: usize) -> String {
+fn line(s: &str, width: usize) -> String {
+    let inner = width.saturating_sub(3);
     let visible = s.len();
     if visible >= inner {
-        format!("│ {} │", &s[..inner.saturating_sub(1)])
+        format!("│{}│", &s[..inner.saturating_sub(1)])
     } else {
-        format!("│ {}{} │", s, " ".repeat(inner.saturating_sub(visible)))
+        format!("│ {}{}│", s, " ".repeat(inner.saturating_sub(visible)))
     }
 }
 
@@ -24,8 +25,7 @@ pub fn print_device_box(dev: &BlockDevice) {
     let title = format!(" {} ", dev.name);
     println!("{}", top_line(&title, width).bright_cyan());
 
-    let inner = width.saturating_sub(4);
-    let c = |s: &str| line(s, inner);
+    let c = |s: &str| line(s, width);
 
     let model = if dev.model.is_empty() { "Unknown".into() } else { dev.model.clone() };
     println!("{}", c(&format!("Model: {}", model)).bright_cyan());
@@ -61,8 +61,7 @@ pub fn print_summary_box(devices: &[BlockDevice]) {
     let title = " Block Devices ";
     println!("{}", top_line(title, width).bright_cyan());
 
-    let inner = width.saturating_sub(4);
-    let c = |s: &str| line(s, inner).bright_cyan();
+    let c = |s: &str| line(s, width).bright_cyan();
 
     for dev in devices {
         let size = format_size(dev.size);
@@ -84,11 +83,10 @@ pub fn print_partition_table_box(device: &str, table: &str) {
     let title = format!(" {} Partition Table ", device);
     println!("{}", top_line(&title, width).bright_cyan());
 
-    let inner = width.saturating_sub(4);
-    let c = |s: &str| line(s, inner).bright_cyan();
+    let c = |s: &str| line(s, width).bright_cyan();
 
     for line_str in table.lines() {
-        let truncated: String = line_str.chars().take(inner).collect();
+        let truncated: String = line_str.chars().take(width.saturating_sub(3)).collect();
         println!("{}", c(&truncated));
     }
 
@@ -98,7 +96,7 @@ pub fn print_partition_table_box(device: &str, table: &str) {
 pub fn print_error(msg: &str) {
     let w: usize = 50;
     eprintln!("{}", top_line(" Error ", w).red());
-    eprintln!("{}", line(msg, w.saturating_sub(4)).red());
+    eprintln!("{}", line(msg, w).red());
     eprintln!("{}", bottom_line(w).red());
 }
 
@@ -110,8 +108,7 @@ pub fn print_help() {
     let width: usize = 62;
     let title = " hdisk ";
     println!("{}", top_line(title, width).bright_cyan());
-    let inner = width.saturating_sub(4);
-    let c = |s: &str| line(s, inner).bright_cyan();
+    let c = |s: &str| line(s, width).bright_cyan();
     let lines = [
         "",
         "  Usage: hdisk <command> [options]",
